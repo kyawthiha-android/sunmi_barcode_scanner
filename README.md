@@ -25,11 +25,11 @@ Call laser scan with button
 
 ```
 
-bool? scannerCalled = await SunmiBarcodeScanner.scan
+bool? scannerCalled = await SunmiBarcodeScanner.scan;
 
 ```
 
-tested devices (✔)
+Tested devices (✔)
 
 - L2        
 - V2 pro    
