@@ -32,7 +32,6 @@ public class SunmiScannerUtils {
     };
 
 
-
     private SunmiScannerUtils() {
     }
 
@@ -55,9 +54,9 @@ public class SunmiScannerUtils {
     public void disconnectScannerService(Context context, BroadcastReceiver broadcastReceiver) {
         if (scannerService != null) {
             scannerService = null;
+            context.getApplicationContext().unbindService(serviceConnection);
+            context.unregisterReceiver(broadcastReceiver);
         }
-        context.getApplicationContext().unbindService(serviceConnection);
-        context.unregisterReceiver(broadcastReceiver);
     }
 
     public void sendKeyEvent(KeyEvent key) throws RemoteException {

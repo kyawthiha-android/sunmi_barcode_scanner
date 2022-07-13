@@ -42,7 +42,7 @@ class _BarcodePageState extends State<BarcodePage> {
       onWillPop: () async => await SunmiBarcodeScanner.dispose ?? false,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Sunmi Barcode Scanner'),
         ),
         body: Center(
           child: Column(
