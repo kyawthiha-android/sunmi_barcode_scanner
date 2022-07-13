@@ -35,3 +35,6 @@ Tested devices (✔)
 - V2 pro    
 
 
+[L2 userguide_EN0731](https://github.com/kyawthiha-android/sunmi_barcode_scanner/blob/master/L2%20userguide_EN0731.pdf)
+
+
