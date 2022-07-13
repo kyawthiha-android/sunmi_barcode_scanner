@@ -49,7 +49,8 @@ class _BarcodePageState extends State<BarcodePage> {
             children: [
               ElevatedButton(
                   onPressed: () async {
-                    bool? isSuccess = await SunmiBarcodeScanner.dispose;// <---- must be dispose
+                    bool? isSuccess = await SunmiBarcodeScanner
+                        .dispose; // <---- must be dispose
                     print('$isSuccess');
                   },
                   child: const Text('Stop')),
@@ -62,14 +63,15 @@ class _BarcodePageState extends State<BarcodePage> {
                   child: const Text('Start')),
               const SizedBox(height: 10),
               StreamBuilder<String>(
-                  stream: scannerListener,
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData) {
-                      return Text('${snapshot.data}');
-                    } else {
-                      return Container();
-                    }
-                  }),
+                stream: scannerListener,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    return Text('${snapshot.data}');
+                  } else {
+                    return Container();
+                  }
+                },
+              ),
               const SizedBox(height: 10),
               ElevatedButton(
                   onPressed: () async {
