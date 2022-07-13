@@ -54,10 +54,10 @@ public class SunmiScannerUtils {
 
     public void disconnectScannerService(Context context, BroadcastReceiver broadcastReceiver) {
         if (scannerService != null) {
-            context.getApplicationContext().unbindService(serviceConnection);
-            context.unregisterReceiver(broadcastReceiver);
             scannerService = null;
-        } else System.out.println("scanner is null can't kill");
+        }
+        context.getApplicationContext().unbindService(serviceConnection);
+        context.unregisterReceiver(broadcastReceiver);
     }
 
     public void sendKeyEvent(KeyEvent key) throws RemoteException {

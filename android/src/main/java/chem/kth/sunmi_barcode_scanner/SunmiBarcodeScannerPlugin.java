@@ -26,7 +26,6 @@ public class SunmiBarcodeScannerPlugin implements FlutterPlugin, MethodCallHandl
     private Activity activity;
     private BarcodeBroadcastReceiver broadcastReceiver;
     private MethodChannel channel;
-    private EventChannel barcodeListener;
     private static final String BARCODE_LISTENER_EVENT_CHANNEL = "listenBarcodeScanningProcess";
     private static final String SCAN_BARCODE = "scan_barcode_event";
     private static final String KILL_SCAN_BARCODE = "kill_scan_barcode_event";
@@ -44,25 +43,24 @@ public class SunmiBarcodeScannerPlugin implements FlutterPlugin, MethodCallHandl
     @Override
     public void onMethodCall(@NonNull MethodCall call, @NonNull Result result) {
         switch (call.method) {
-            case "init":
-                onListenScannerEventChannel();
-                System.out.println("barcode reader is listening :>");
             case SCAN_BARCODE:
                 try {
                     if (connection != null)
                         connection.scan();
                 } catch (RemoteException e) {
                     e.printStackTrace();
-                    result.error("0", e.getMessage(), e.getLocalizedMessage());
+//                    result.error("0", e.getMessage(), e.getLocalizedMessage());
+                    result.success(false);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    result.success(false);
                 }
-                result.success("scan_barcode_event");
+                result.success(true);
                 break;
             case KILL_SCAN_BARCODE:
                 System.out.println("Oh! You kill barcode listener :p");
                 connection.disconnectScannerService(activity.getApplicationContext(), broadcastReceiver);
-                result.success("success");
+                result.success(true);
                 break;
             default:
                 result.notImplemented();
@@ -71,7 +69,7 @@ public class SunmiBarcodeScannerPlugin implements FlutterPlugin, MethodCallHandl
     }
 
     private void onListenScannerEventChannel() {
-        barcodeListener = new EventChannel(flutterPluginBinding.getBinaryMessenger(), BARCODE_LISTENER_EVENT_CHANNEL);
+        EventChannel barcodeListener = new EventChannel(flutterPluginBinding.getBinaryMessenger(), BARCODE_LISTENER_EVENT_CHANNEL);
         barcodeListener.setStreamHandler(new EventChannel.StreamHandler() {
             @Override
             public void onListen(Object arguments, EventChannel.EventSink events) {
@@ -83,7 +81,6 @@ public class SunmiBarcodeScannerPlugin implements FlutterPlugin, MethodCallHandl
 
             @Override
             public void onCancel(Object arguments) {
-                barcodeListener = null;
                 connection.disconnectScannerService(activity.getApplicationContext(), broadcastReceiver);
             }
         });

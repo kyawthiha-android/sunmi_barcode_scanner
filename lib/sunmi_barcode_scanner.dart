@@ -9,17 +9,19 @@ class SunmiBarcodeScanner {
   static const String KILL_SCAN_BARCODE = "kill_scan_barcode_event";
   static const String SUNMI_SCANNER_METHOD_CHANNEL = "sunmi_barcode_scanner";
   static EventChannel? _eventChannel;
+  static MethodChannel? _methodChannel = const MethodChannel(
+      SUNMI_SCANNER_METHOD_CHANNEL);
 
-  static const MethodChannel _channel =
-      MethodChannel(SUNMI_SCANNER_METHOD_CHANNEL);
-
-  static Future<String?> get scan async {
-    return await _channel.invokeMethod(SCAN_BARCODE);
+  static Future<bool?> get scan async {
+    return await _methodChannel?.invokeMethod(SCAN_BARCODE);
   }
 
-  static void get init {
+  static Stream<String>? get init {
     _eventChannel = const EventChannel(BARCODE_LISTENER_METHOD);
     // final String? scan = await _channel.invokeMethod(INIT_SCANNER);
+    return _eventChannel
+        ?.receiveBroadcastStream()
+        .map((event) => event.toString());
   }
 
   static Stream<String>? listener() {
@@ -28,11 +30,9 @@ class SunmiBarcodeScanner {
         .map((event) => event.toString());
   }
 
-  static Future<String?> get dispose async {
-    return await _channel.invokeMethod(KILL_SCAN_BARCODE);
-  }
-
-  static Future<String?> get callListener async {
-    return await _channel.invokeMethod(KILL_SCAN_BARCODE);
+  static Future<bool?> get dispose async {
+    bool? success = await _methodChannel?.invokeMethod(KILL_SCAN_BARCODE);
+    _eventChannel = null;
+    return success;
   }
 }

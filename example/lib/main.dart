@@ -5,24 +5,42 @@ void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return const MaterialApp(
+      home: BarcodePage(),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
+class BarcodePage extends StatefulWidget {
+  const BarcodePage({Key? key}) : super(key: key);
+
+  @override
+  State<BarcodePage> createState() => _BarcodePageState();
+}
+
+class _BarcodePageState extends State<BarcodePage> {
+  Stream<String>? scannerListener;
+
+  _initScanner() {
+    scannerListener = SunmiBarcodeScanner.init;
+  }
+
   @override
   void initState() {
-    SunmiBarcodeScanner.init;
+    _initScanner();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
+    return WillPopScope(
+      onWillPop: () async => await SunmiBarcodeScanner.dispose ?? false,
+      child: Scaffold(
         appBar: AppBar(
           title: const Text('Plugin example app'),
         ),
@@ -30,19 +48,21 @@ class _MyAppState extends State<MyApp> {
           child: Column(
             children: [
               ElevatedButton(
-                  onPressed: () {
-                    SunmiBarcodeScanner.dispose;
+                  onPressed: () async {
+                    bool? isSuccess = await SunmiBarcodeScanner.dispose;// <---- must be dispose
+                    print('$isSuccess');
                   },
                   child: const Text('Stop')),
               const SizedBox(height: 10),
               ElevatedButton(
                   onPressed: () {
-                    SunmiBarcodeScanner.init;
+                    _initScanner();
+                    setState(() {});
                   },
                   child: const Text('Start')),
               const SizedBox(height: 10),
               StreamBuilder<String>(
-                  stream: SunmiBarcodeScanner.listener(),
+                  stream: scannerListener,
                   builder: (context, snapshot) {
                     if (snapshot.hasData) {
                       return Text('${snapshot.data}');
